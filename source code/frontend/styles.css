@@ -1,0 +1,92 @@
+/* Set a default margin and padding for all elements */
+* {
+    margin: 0;
+    padding: 0;
+}
+
+/* Set the font size and line height for the entire website */
+body {
+    font-size: 16px;
+    line-height: 1.5;
+    background-color: #333;
+}
+
+/* Style the header */
+header {
+    background-color: #252525;
+    color: #fff;
+    padding: 1rem;
+    text-align: center;
+    font-size: 3rem;
+    font-family: Impact, sans-serif;
+    text-shadow: 2px 2px #000;
+}
+
+/* Style the selection panel */
+.selection-panel {
+    background-color: #b1aeae;
+    border: 1px solid #ccc;
+    padding: 1rem;
+    text-align: center;
+    margin: 1rem;
+    width:20%;
+    height: 300px;
+    float: left;
+}
+
+/* Style the visualization panel */
+.visualization-panel {
+    background-color: #b1aeae;
+    border: 1px solid #ccc;
+    padding: 1rem;
+    margin: 1rem;
+    text-align: center;
+    width: 70%;
+    height: 300px;
+    float: left;
+}
+
+/* Style the sentiment panel */
+.sentiment-panel {
+    background-color: #b1aeae;
+    border: 1px solid #ccc;
+    padding: 1rem;
+    text-align: center;
+    margin: 1rem;
+    float: left;
+    width: 20%;
+    height: 300px;
+}
+
+/* Style the synthetic data panel */
+.synthetic-panel {
+    background-color: #b1aeae;
+    border: 1px solid #ccc;
+    padding: 1rem;
+    margin: 1rem;
+    float: left;
+    height: 300px;
+    width:70%;
+}
+
+/* Style the selection menu */
+#powerlifter-select {
+    background-color: #868484;
+}
+
+/* Style the image container */
+.image-container img {
+    width: 240px;
+    height: 220px;
+}
+
+/* Style the predictions panel */
+.predictions-panel {
+    background-color: #b1aeae;
+    border: 1px solid #ccc;
+    padding: 1rem;
+    margin: 1rem;
+    float: left;
+    height: 500px;
+    width:95%;
+}

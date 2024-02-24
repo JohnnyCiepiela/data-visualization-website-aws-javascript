@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Add a stylesheet to the HTML page -->
+  <link rel="stylesheet" type="text/css" href="styles.css" />
+
+  <!-- Load Plotly library from the CDN -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  
+  <title>IronStats</title>
+</head>
+
+<!-- Trigger the functions on page load -->
+<body onload="loadSentimentAnalysis(), loadNumericalData(1), loadPredictions()">
+  
+  <!-- Add a header to the page -->
+  <header>IronStats</header>
+
+  <!-- Add a dropdown menu to the page -->
+  <div class="selection-panel">
+    <label for="powerlifter-select">Select a powerlifter</label>
+    <select name="powerlifter-select" id="powerlifter-select">
+      <option value="powerlifter-1">Blake Lehew</option>
+      <option value="powerlifter-2">Chad Penson</option>
+      <option value="powerlifter-3">John Haack</option>
+      <option value="powerlifter-4">Yury Belkin</option>
+      <option value="powerlifter-5">Zahir Khudayarov</option>
+    </select>
+    </br>
+    </br>
+    <div class="image-container"></div>
+  </div>
+
+  <!-- Add a chart panel to the page -->
+  <div class="visualization-panel" id="total-chart"></div>
+
+  <!-- Add a sentiment analysis panel to the page -->
+  <div class="sentiment-panel" id="pie-chart">POWERLIFTING SENTIMENT</div>
+
+  <!-- Add a synthetic panel to the page -->
+  <div class="synthetic-panel" id="synthetic-panel">
+    <iframe src="https://chart-studio.plotly.com/~JanCiepiela/0\" width="100%" height="300px"></iframe>
+  </div>
+
+  <!-- Add a predictions panel to the page -->
+  <div class="predictions-panel" id="predictions-panel"></div>
+
+  <!-- Add a script section for JavaScript code -->
+  <script>
+
+    // Function to get the image URL for a given powerlifter
+    function getImageUrlForPowerlifter(number) {
+      switch (number) {
+        case 1:
+          return "athletes/blake.jpg";
+        case 2:
+          return "athletes/chad.jpg";
+        case 3:
+          return "athletes/john.jpg";
+        case 4:
+          return "athletes/yury.jpg";
+        case 5:
+          return "athletes/zahir.jpg";
+        default:
+          return "";
+      }
+    }
+
+    // Function to load sentiment analysis data and create a pie chart
+    function loadSentimentAnalysis() {
+      // Open connection to the WebSocket server
+      let connection = new WebSocket(
+        "wss://8pbhp2wbt7.execute-api.us-east-1.amazonaws.com/prod"
+      );
+
+      // Log a message when the WebSocket connection is established
+      connection.onopen = function (event) {
+        console.log("Connected: " + JSON.stringify(event));
+
+        // Send a message to request sentiment analysis data from the server
+        let msgObject = {
+          action: "sendMessage",
+          table: "SentimentResults"
+        };
+        connection.send(JSON.stringify(msgObject));
+        console.log("Message sent: " + JSON.stringify(msgObject));
+      };
+
+      connection.onmessage = function (msg) {
+        console.log(msg);
+        const data = JSON.parse(msg.data); // parse the received JSON message
+
+        // Extract the sentiment analysis data
+        const sentiments = data.map((item) => {
+          return {
+            label: item.sentiment,
+            value: item[item.sentiment.toLowerCase()],
+          };
+        });
+        console.log(sentiments)
+
+        // Create Plotly data object for the pie chart
+        const dataSentiment = [
+          {
+            labels: sentiments.map((s) => s.label),
+            values: sentiments.map((s) => s.value),
+            type: "pie",
+          },
+        ];
+
+        // Create Plotly layout object for the pie chart
+        const layoutSentiment = {
+          height: 200,
+          width: 250,
+          margin: { t: 0, b: 0, l: 0, r: 0 },
+          padding: { t: 0, b: 0, l: 0, r: 0 },
+          showlegend: false,
+          paper_bgcolor: "rgba(0,0,0,0)",
+          plot_bgcolor: "rgba(0,0,0,0)",
+        };
+
+        // Create the pie chart in the #pie-chart div
+        Plotly.newPlot("pie-chart", dataSentiment, layoutSentiment);
+      }
+    }
+
+    const powerlifterSelect = document.getElementById("powerlifter-select");
+    powerlifterSelect.addEventListener("change", function () {
+      const selectedPowerlifter = powerlifterSelect.value;
+
+      // call a function based on the selected powerlifter
+      switch (selectedPowerlifter) {
+        case "powerlifter-1":
+          loadNumericalData(1);
+          break;
+        case "powerlifter-2":
+          loadNumericalData(2);
+          break;
+        case "powerlifter-3":
+          loadNumericalData(3);
+          break;
+        case "powerlifter-4":
+          loadNumericalData(4);
+          break;
+        case "powerlifter-5":
+          loadNumericalData(5);
+          break;
+        default:
+          console.log("Unknown powerlifter selected");
+      }
+    });
+
+    function loadNumericalData(number) {
+
+      console.log("Testing if the function is being called! - " + number);
+
+      // Open connection
+      let connection = new WebSocket(
+        "wss://8pbhp2wbt7.execute-api.us-east-1.amazonaws.com/prod"
+      );
+
+      // Log connected response
+      connection.onopen = function (event) {
+        console.log("Connected: " + JSON.stringify(event));
+
+        let msgObject = {
+          action: "sendMessage",
+          table: "Powerlifters"
+        };
+        connection.send(JSON.stringify(msgObject));
+        console.log("Message sent: " + JSON.stringify(msgObject));
+      };
+
+      connection.onmessage = function (msg) {
+        const data = JSON.parse(msg.data);
+        console.log(data);
+
+        let filteredData = [];
+
+        if (number === 1) {
+          filteredData = data.filter(record => record.name === "Blake Lehew");
+        } else if (number === 2) {
+          filteredData = data.filter(record => record.name === "Chad Penson");
+        } else if (number === 3) {
+          filteredData = data.filter(record => record.name === "John Haack");
+        } else if (number === 4) {
+          filteredData = data.filter(record => record.name === "Yury Belkin");
+        } else if (number === 5) {
+          filteredData = data.filter(record => record.name === "Zahir Khudayarov");
+        }
+
+        const imageUrl = getImageUrlForPowerlifter(number);
+        const imageContainer = document.querySelector(".image-container");
+        imageContainer.innerHTML = `<img src="${imageUrl}" alt="Powerlifter ${number}" />`;
+
+        const dates = filteredData.map(record => record.date);
+        const totals = filteredData.map(record => record.total);
+
+        const trace = {
+          x: dates,
+          y: totals,
+          type: 'bar'
+        };
+
+        const layout = {
+          title: `${filteredData[0].name}'s lifts over time`,
+          paper_bgcolor: "rgba(0,0,0,0)",
+          plot_bgcolor: "rgba(0,0,0,0)",
+          xaxis: {
+            title: 'Date'
+          },
+          yaxis: {
+            title: 'Total'
+          }
+        };
+
+        Plotly.newPlot('total-chart', [trace], layout);
+      }
+    }
+
+    function loadPredictions() {
+
+      let connection = new WebSocket(
+        "wss://8pbhp2wbt7.execute-api.us-east-1.amazonaws.com/prod"
+      );
+
+      // Log connected response
+      connection.onopen = function (event) {
+        console.log("Connected: " + JSON.stringify(event));
+
+        let msgObject = {
+          action: "sendMessage",
+          table: "PredictionsSynthetic"
+        };
+        connection.send(JSON.stringify(msgObject));
+        console.log("Message sent: " + JSON.stringify(msgObject));
+      };
+
+      connection.onmessage = function (msg) {
+        const data = JSON.parse(msg.data); // parse the received JSON message
+        console.log(data);
+
+        const x = data.map(record => record.x);
+        const y = data.map(record => record.y);
+      
+        // Create the trace
+          const trace = {
+           x: x,
+           y: y,
+           type: "scatter",
+           line: {
+             color: "blue"
+           }
+         };
+ 
+         // Create the plot layout
+         const layout = {
+           title: "Predictions for Synthetic Data",
+           xaxis: {
+             title: "Time (hours)"
+           },
+           yaxis: {
+             title: "Value"
+           }
+         };
+ 
+         // Create the plot
+         Plotly.newPlot("predictions-panel", [trace], layout);
+ 
+  
+      }
+
+    }
+  </script>
+</body>
+
+</html>
