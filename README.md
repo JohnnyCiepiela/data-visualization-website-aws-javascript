@@ -1,2 +1,2 @@
 # data-visualization-website-aws-javascript
-Data visualization website in JavaScript that uses AWS lambda functions and machine learning to perform sentiment analysis.
+Data visualization website in JavaScript, ML in TypeScript, that uses AWS features such as DynamoDB, AWS Comprehend to perform sentiment analysis about powerlifters data from Twitter.
