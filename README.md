@@ -1,2 +1,2 @@
 # data-visualization-website-aws-javascript
-Website in JS, Machine Learning in TypeScript, that uses AWS features such as DynamoDB, Comprehend to perform sentiment analysis on powerlifters data from Twitter.
+Website in JS, Machine Learning in TypeScript, that uses AWS features such as DynamoDB, Comprehend to perform Sentiment Analysis on powerlifters data from Twitter.
